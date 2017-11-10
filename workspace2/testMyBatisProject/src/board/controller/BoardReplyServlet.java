@@ -34,6 +34,7 @@ public class BoardReplyServlet extends HttpServlet {
 		// 댓글 등록 처리용 컨트롤러
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
+		
 		int currentPage = Integer.parseInt(request.getParameter("page"));
 		int bnum = Integer.parseInt(request.getParameter("bnum"));
 		String btitle = request.getParameter("btitle");

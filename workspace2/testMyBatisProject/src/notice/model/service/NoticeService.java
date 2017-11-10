@@ -6,91 +6,37 @@ import java.util.HashMap;
 
 import notice.model.dao.NoticeDao;
 import notice.model.vo.Notice;
-import static common.JDBCTemplate.*;
 
 public class NoticeService {
 	public NoticeService(){}
 	
 	public ArrayList<Notice> selectList(){
-		Connection con = getConnection();
-		ArrayList<Notice> list = new NoticeDao().selectList(con);
-		close(con);
-		return list;
-	}
-
-	public HashMap<Integer, Notice> selectMap() {
-		Connection con = getConnection();
-		HashMap<Integer, Notice> map = new NoticeDao().selectMap(con);
-		close(con);
-		return map;
+		return new NoticeDao().selectList();
 	}
 
 	public Notice selectNotice(int no) {
-		Connection con = getConnection();
-		Notice notice = new NoticeDao().selectOne(con, no);
-		close(con);
-		return notice;
+		return new NoticeDao().selectOne(no);
 	}
 
 	public void addReadCount(int no) {
-		Connection con = getConnection();
-		int result = new NoticeDao().updateReadCount(con, no);
-		if(result > 0)
-			commit(con);
-		else
-			rollback(con);
-		close(con);		
+		new NoticeDao().updateReadCount(no);
 	}
 
 	public int insertNotice(Notice notice) {
-		Connection con = getConnection();
-		int result = new NoticeDao().insertNotice(con, notice);
-		if(result > 0)
-			commit(con);
-		else
-			rollback(con);
-		close(con);
-		return result;
+		return new NoticeDao().insertNotice(notice);
 	}
 
 	public int deleteNotice(int no) {
-		Connection con = getConnection();
-		int result = new NoticeDao().deleteNotice(con, no);
-		if(result > 0)
-			commit(con);
-		else
-			rollback(con);
-		close(con);
-		return result;
+		return new NoticeDao().deleteNotice(no);
 	}
 
 	public int updateNotice(Notice notice) {
-		Connection con = getConnection();
-		int result = new NoticeDao().updateNotice(con, notice);
-		if(result > 0)
-			commit(con);
-		else
-			rollback(con);
-		close(con);
-		return result;
+		return new NoticeDao().updateNotice(notice);
 	}
 
 	public ArrayList<Notice> selectSearch(String keyword) {
-		Connection con = getConnection();
-		ArrayList<Notice> list = new NoticeDao().selectTitleSearch(con, keyword);
-		close(con);
-		return list;
+		return new NoticeDao().selectTitleSearch(keyword);
 	}
 	
 	
 }
-
-
-
-
-
-
-
-
-
-

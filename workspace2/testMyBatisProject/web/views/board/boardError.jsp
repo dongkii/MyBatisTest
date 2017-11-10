@@ -7,7 +7,7 @@
 <title>boardError</title>
 </head>
 <body>
-<h2>board 서비스 에러 발생 : <%= request.getAttribute("message") %></h2>
+<h2>board 서비스 에러 발생 : ${message}</h2>
 <a href="/testm/index.jsp">시작페이지로 이동</a>
 </body>
 </html>

@@ -2,11 +2,6 @@
     pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>   
-    <%-- import="member.model.vo.Member" %> --%>
-<%-- <%
-	//Member member = (Member)session.getAttribute("member");
-	Member member = (Member)request.getAttribute("member");
-%> --%>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,25 +12,25 @@
 </style>
 <script type="text/javascript">
 	function mdel(){
-		<%-- location.href = "/first/mdelete?userid=<%= member.getMemberId() %>"; --%>
-		location.href = "/first/mdelete?userid=${ requestScope.member.getMemberId() }";
+		location.href = "/testm/mdelete?userid=${ requestScope.member.getMemberId() }";
 		return false;
 	}
 </script>
 </head>
 <body>
-<h2 align="center"><%-- <%= member.getMemberName() %> --%>
+<c:import url="../../header.jsp" />
+<h2 align="center">
 ${requestScope.member.memberName } 님 정보보기</h2>
 <br><br>
 <form action="/testm/mupdate" method="post">
 <table align="center" width="600" height="350">
 <tr><th width="150">아이디</th>
-	<td width="450"><%-- <input name="userid" value="<%= member.getMemberId() %>" readonly> --%>
+	<td width="450">
 	<input name="userid" value="${requestScope.member.memberId }" readonly>
 	</td>
 </tr>
 <tr><th>이 름</th>
-	<td><%-- <input type="text" name="username" value="<%= member.getMemberName() %>"> --%>
+	<td>
 	<input type="text" name="username" value="${requestScope.member.memberName }">
 	</td>
 </tr>
@@ -219,5 +214,13 @@ ${requestScope.member.memberName } 님 정보보기</h2>
 <div align="center">
 	<a href="/testm/index.jsp">시작페이지로 이동</a>
 </div>
+
+
+<c:import url="../../footer.jsp" />
 </body>
 </html>
+
+
+
+
+

@@ -36,11 +36,8 @@ public class BoardListServlet extends HttpServlet {
 		// 페이지 단위로 게시글 목록 조회 처리용 컨트롤러
 		response.setContentType("text/html; charset=utf-8");
 		
-		BoardPage bp = new BoardPage();
-		
 		//페이지 처리용
 		int currentPage = 1;
-		bp.setCurrentPage(1);
 		//한 페이지에 출력할 페이지 갯수 지정
 		int limit = 10;
 		
@@ -55,9 +52,8 @@ public class BoardListServlet extends HttpServlet {
 		//System.out.println("listCount : " + listCount);
 		
 		//해당 페이지용 목록 조회
-		bp.setCurrentPage(currentPage);
-		bp.setLimit(limit);
-		ArrayList<Board> list = bservice.selectList(bp);
+		BoardPage bPage = new BoardPage(currentPage, limit);
+		ArrayList<Board> list = bservice.selectList(bPage);
 		
 		//총 페이지 수 계산 : 목록이 최소 1개일 때는 한 페이지로 처리함
 		//페이지 1이 되려면 = 목록 0.1 개 + 0.9 계산되게 함

@@ -1,286 +1,134 @@
 package notice.model.dao;
 
 import java.util.*;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import board.model.vo.Board;
+import member.model.dao.MemberDao;
+
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 
 import notice.model.vo.Notice;
-import static common.JDBCTemplate.*;
 
 public class NoticeDao {
-	private Properties prop;
-	public NoticeDao(){
-		prop = new Properties();
-		String currentPath = NoticeDao.class.getResource("./").getPath();
-		try {
-			prop.load(new FileReader(currentPath + "notice.properties"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	public NoticeDao(){}
 	
-	public ArrayList<Notice> selectList(Connection con){
+	public ArrayList<Notice> selectList(){
 		ArrayList<Notice> list = null;
-		Statement stmt = null;
-		ResultSet rset = null;
-		
-		//String query = "select * from notice order by notice_no desc";
-		String query = prop.getProperty("selectList");
-		
+		SqlSession session = null;
 		try {
-			stmt = con.createStatement();
-			rset = stmt.executeQuery(query);
-			
-			if(rset != null){
-				list = new ArrayList<Notice>();
-				
-				while(rset.next()){
-					Notice n = new Notice();
-					
-					n.setNoticeNo(rset.getInt("notice_no"));
-					n.setNoticeTitle(rset.getString("notice_title"));
-					n.setNoticeWriter(rset.getString("notice_writer"));
-					n.setNoticeContent(rset.getString("notice_content"));
-					n.setNoticeDate(rset.getDate("notice_date"));
-					n.setOriginalFileName(rset.getString("original_filename"));
-					n.setRenameFileName(rset.getString("rename_filename"));
-					n.setReadCount(rset.getInt("read_count"));
-					
-					list.add(n);
-				}
-			}
-			
+			session = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis/mybatis-config.xml")).openSession(false);
+			list = new ArrayList<Notice>(session.selectList("notice.selectList"));
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally{
-			close(rset);
-			close(stmt);
-		}
-		
+		} finally {
+			session.close();
+		}		
 		return list;
 	}
 
-	public HashMap<Integer, Notice> selectMap(Connection con) {
-		HashMap<Integer, Notice> map = null;
-		Statement stmt = null;
-		ResultSet rset = null;
-		
-		//String query = "select * from notice order by notice_no desc";
-		String query = prop.getProperty("selectMap");
-		
-		try {
-			stmt = con.createStatement();
-			rset = stmt.executeQuery(query);
-			
-			if(rset != null){
-				map = new HashMap<Integer, Notice>();
-				
-				while(rset.next()){
-					Notice n = new Notice();
-					
-					n.setNoticeNo(rset.getInt("notice_no"));
-					n.setNoticeTitle(rset.getString("notice_title"));
-					n.setNoticeWriter(rset.getString("notice_writer"));
-					n.setNoticeContent(rset.getString("notice_content"));
-					n.setNoticeDate(rset.getDate("notice_date"));
-					n.setOriginalFileName(rset.getString("original_filename"));
-					n.setRenameFileName(rset.getString("rename_filename"));
-					n.setReadCount(rset.getInt("read_count"));
-					
-					map.put(n.getNoticeNo(), n);
-				}
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			close(rset);
-			close(stmt);
-		}
-		
-		return map;
-	}
-
-	public Notice selectOne(Connection con, int no) {
+	public Notice selectOne(int no) {
 		Notice notice = null;
-		PreparedStatement pstmt = null;
-		ResultSet rset = null;
-		
-		//String query = "select * from notice where notice_no = ?";
-		String query = prop.getProperty("selectOne");
-		
+		SqlSession session = null;
 		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, no);
-			
-			rset = pstmt.executeQuery();
-			
-			if(rset.next()){
-				notice = new Notice();
-				
-				notice.setNoticeNo(rset.getInt("notice_no"));
-				notice.setNoticeTitle(rset.getString("notice_title"));
-				notice.setNoticeWriter(rset.getString("notice_writer"));
-				notice.setNoticeContent(rset.getString("notice_content"));
-				notice.setNoticeDate(rset.getDate("notice_date"));
-				notice.setOriginalFileName(rset.getString("original_filename"));
-				notice.setRenameFileName(rset.getString("rename_filename"));
-				notice.setReadCount(rset.getInt("read_count"));
-			}
-			
+			session = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis/mybatis-config.xml")).openSession(false);
+			notice = session.selectOne("notice.selectOne", no);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			close(rset);
-			close(pstmt);
+			session.close();
 		}
-		
 		return notice;
 	}
 
-	public int updateReadCount(Connection con, int no) {
+	public int updateReadCount(int no) {
 		int result = 0;
-		PreparedStatement pstmt = null;
-		
-		/*String query = "update notice set read_count = read_count + 1 "
-				+ "where notice_no = ?";*/
-		String query = prop.getProperty("updateReadCount");
-		
+		SqlSession session = null;
 		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, no);
-			
-			result = pstmt.executeUpdate();
-			
+			session = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis/mybatis-config.xml")).openSession(false);
+			result = session.update("notice.updateReadCount", no);
+			if(result>0) session.commit();
+			else session.rollback();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			close(pstmt);
-		}
-		
-		return result;
-	}
-
-	public int insertNotice(Connection con, Notice notice) {
-		int result = 0;
-		PreparedStatement pstmt = null;
-		
-		/*String query = "insert into notice values "
-				+ "((select max(notice_no) + 1 from notice), "
-				+ "?, ?, ?, default, ?, ?, default)";*/
-		String query = prop.getProperty("insertNotice");
-		
-		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, notice.getNoticeTitle());
-			pstmt.setString(2, notice.getNoticeWriter());
-			pstmt.setString(3, notice.getNoticeContent());
-			pstmt.setString(4, notice.getOriginalFileName());
-			pstmt.setString(5, notice.getRenameFileName());
-			
-			result = pstmt.executeUpdate();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			close(pstmt);
+			session.close();
 		}		
-		
 		return result;
 	}
 
-	public int deleteNotice(Connection con, int no) {
+	public int insertNotice(Notice notice) {
 		int result = 0;
-		PreparedStatement pstmt = null;
-		
-		//String query = "delete from notice where notice_no = ?";
-		String query = prop.getProperty("deleteNotice");
-		
+		SqlSession session = null;
 		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, no);
-			
-			result = pstmt.executeUpdate();
-			
+			session = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis/mybatis-config.xml")).openSession(false);
+			if(notice.getOriginalFileName()!=null)
+				result = session.insert("notice.insertNotice", notice);
+			else
+				result = session.insert("notice.insertNotice2", notice);
+			if(result>0) session.commit();
+			else session.rollback();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			close(pstmt);
+			session.close();
+		}		
+		return result;
+	}
+
+	public int deleteNotice(int no) {
+		int result = 0;
+		SqlSession session = null;
+		try {
+			session = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis/mybatis-config.xml")).openSession(false);
+			result = session.insert("notice.deleteNotice", no);
+			if(result>0) session.commit();
+			else session.rollback();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			session.close();
 		}
-		
 		return result;
 	}
 	
 
-	public int updateNotice(Connection con, Notice notice) {
+	public int updateNotice(Notice notice) {
 		int result = 0;
-		PreparedStatement pstmt = null;
-		
-		/*String query = "update notice set notice_title = ?, "
-				+ "notice_content = ?, original_filename = ?, "
-				+ "rename_filename = ? where notice_no = ?";*/
-		String query = prop.getProperty("updateNotice");
-		
+		SqlSession session = null;
 		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, notice.getNoticeTitle());
-			pstmt.setString(2, notice.getNoticeContent());
-			pstmt.setString(3, notice.getOriginalFileName());
-			pstmt.setString(4, notice.getRenameFileName());
-			pstmt.setInt(5, notice.getNoticeNo());
-			
-			result = pstmt.executeUpdate();
-			
+			session = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis/mybatis-config.xml")).openSession(false);
+			if(notice.getOriginalFileName()!=null)
+				result = session.update("notice.updateNotice", notice);
+			else
+				result = session.update("notice.updateNotice2", notice);
+			if(result>0) session.commit();
+			else session.rollback();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			close(pstmt);
-		}
-		
+			session.close();
+		}	
 		return result;
 	}
 
-	public ArrayList<Notice> selectTitleSearch(Connection con, String keyword) {
+	public ArrayList<Notice> selectTitleSearch(String keyword) {
 		ArrayList<Notice> list = null;
-		PreparedStatement pstmt = null;
-		ResultSet rset = null;
-		
-		/*String query = "select * from notice "
-				+ "where notice_title like ? order by notice_no desc";*/
-		String query = prop.getProperty("selectTitleSearch");
-		
+		SqlSession session = null;
 		try {
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, "%" + keyword + "%");
-			
-			rset = pstmt.executeQuery();
-			
-			if(rset != null){
-				list = new ArrayList<Notice>();
-				
-				while(rset.next()){
-					Notice n = new Notice();
-					
-					n.setNoticeNo(rset.getInt("notice_no"));
-					n.setNoticeTitle(rset.getString("notice_title"));
-					n.setNoticeWriter(rset.getString("notice_writer"));
-					n.setNoticeContent(rset.getString("notice_content"));
-					n.setNoticeDate(rset.getDate("notice_date"));
-					n.setOriginalFileName(rset.getString("original_filename"));
-					n.setRenameFileName(rset.getString("rename_filename"));
-					n.setReadCount(rset.getInt("read_count"));
-					
-					list.add(n);
-				}
-			}
-			
+			session = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis/mybatis-config.xml")).openSession(false);
+			list = new ArrayList<Notice>(session.selectList("notice.selectTitleSearch", "%" + keyword + "%"));
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally{
-			close(rset);
-			close(pstmt);
-		}
-		
+		} finally {
+			session.close();
+		}	
 		return list;
-	}
+	}	
+	
 }

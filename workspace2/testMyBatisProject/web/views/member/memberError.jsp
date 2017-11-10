@@ -13,4 +13,4 @@
 <h1>에러 메세지 : <%-- <%= errorMessage %> --%> ${message }</h1>
 <button onclick="javascript:history.go(-1);">이전 페이지로 이동</button>
 </body>
-</html>
+</html>	

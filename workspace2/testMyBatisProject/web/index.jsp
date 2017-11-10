@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    pageEncoding="UTF-8" %>  
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +10,7 @@
 <script type="text/javascript">
 	$(function(){
 		$.ajax({
-			url: "/mweb/btop3",
+			url: "/testm/btop3",
 			type: "get",
 			dataType: "json",
 			success: function(data){
@@ -30,17 +30,15 @@
 </script>
 </head>
 <body>
-<c:import url="header.jsp"/>
+<c:import url="header.jsp" />
 <hr>
 <section>
 <!-- 본문영역 : ajax 이용 게시글 조회수 top3 원글 조회 출력 처리 -->
 <table id="toplist" border="1" cellspacing="0" width="500" bgcolor="yellow">
 </table>
-
-
 </section>
 <hr>
-<c:import url="footer.html"/>
+<c:import url="footer.jsp" />
 </body>
 </html>
 

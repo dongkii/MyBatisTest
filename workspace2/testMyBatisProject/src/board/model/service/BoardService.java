@@ -9,23 +9,20 @@ import board.model.dao.BoardDao;
 public class BoardService {
 	public BoardService(){}
 	
-	//전체 게시글 갯수 조회용
 	public int getListCount(){
 		return new BoardDao().getListCount();
 	}
 	
-	//페이지별 목록 조회용
-	public ArrayList<Board> selectList(BoardPage bp){
-		return new BoardDao().selectList(bp);
+	public ArrayList<Board> selectList(BoardPage bPage){
+		return new BoardDao().selectList(bPage);
 	}
 
-	//원글 등록 처리용
 	public int insertBoard(Board b) {
 		return new BoardDao().insertBoard(b);
 	}
 
 	public void addReadCount(int bnum) {
-		return new BoardDao().addReadCount(bnum);
+		new BoardDao().addReadCount(bnum);
 	}
 	
 	public Board selectBoard(int bnum){
@@ -37,7 +34,7 @@ public class BoardService {
 	}
 
 	public void updateReplySeq(Board replyBoard) {
-		return new BoardDao().updateReplySeq(replyBoard);
+		new BoardDao().updateReplySeq(replyBoard);
 	}
 
 	public int insertReply(Board replyBoard) {

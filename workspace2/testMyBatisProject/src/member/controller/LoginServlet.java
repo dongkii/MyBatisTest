@@ -42,14 +42,15 @@ public class LoginServlet extends HttpServlet {
 		//3. 전송온 값 꺼내서 변수에 담기
 		String userId = request.getParameter("userid");
 		String userPwd = request.getParameter("userpwd");
-		Member m = new Member();
-		m.setMemberId(userId);
-		m.setMemberPwd(userPwd);
+		Member sendMember = new Member();
+		sendMember.setMemberId(userId);
+		sendMember.setMemberPwd(userPwd);
 		
 		//4. 비즈니스 로직 처리용 클래스 객체 생성
 		MemberService mservice = new MemberService();	
 		//로그인 처리용 메소드 실행하고, 결과 받음
-		Member member = mservice.loginCheck(m);
+//		Member member = mservice.loginCheck(userId, userPwd);
+		Member member = mservice.loginCheck(sendMember);
 		
 		//5. 받은 결과를 가지고, 성공/실패 페이지 선택해서 클라이언트로 내보냄
 		RequestDispatcher view = null;
