@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC
+"-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+
+	<resultMap id="resultMember" type="Member">
+		<id property="memberId" column="member_id" />
+		<result property="memberPwd" column="MEMBER_PWD" />
+		<result property="memberName" column="MEMBER_NAME" />
+		<result property="gender" column="GENDER" />
+		<result property="age" column="AGE" />
+		<result property="email" column="EMAIL" />
+		<result property="phone" column="PHONE" />
+		<result property="address" column="ADDRESS" />
+		<result property="hobby" column="HOBBY" />
+		<result property="enrollDate" column="ENROLL_DATE" />
+	</resultMap>
+	
+	<resultMap id="resultList" type="Member">
+		<result property="memberId" column="member_id" />
+		<result property="memberPwd" column="MEMBER_PWD" />
+		<result property="memberName" column="MEMBER_NAME" />
+		<result property="gender" column="GENDER" />
+		<result property="age" column="AGE" />
+		<result property="email" column="EMAIL" />
+		<result property="phone" column="PHONE" />
+		<result property="address" column="ADDRESS" />
+		<result property="hobby" column="HOBBY" />
+		<result property="enrollDate" column="ENROLL_DATE" />
+	</resultMap>
+
+	<select id="selectMember" parameterType="Member" resultType="Member"
+		resultMap="resultMember">
+		select * from member where member_id = #{memberId} 
+		and member_pwd = #{memberPwd}
+	</select>
+
+	<select id="selectInfo" parameterType="string" resultType="Member"
+		resultMap="resultMember">
+		select * from member where member_id = #{userId}
+	</select>
+	
+	<select id="selectAll" resultMap="resultList">
+		select * from member
+	</select>
+	
+	<insert id="insertMember" parameterType="Member" flushCache="true" 
+	statementType="PREPARED" useGeneratedKeys="true" >
+		insert into member 
+		values (#{memberId}, #{memberPwd}, #{memberName}, 
+			   #{gender}, #{age}, #{email}, #{phone}, #{address}, #{hobby}, default)
+	</insert>
+
+	<update id="updateMember" parameterType="Member"
+		flushCache="true" statementType="PREPARED" >
+		update member 
+		set member_pwd = #{memberPwd}, member_name = #{memberName}, 
+			age = #{age}, email = #{email}, phone = #{phone}, 
+			address = #{address}, hobby = #{hobby} 
+		where member_id = #{memberId}
+	</update>
+
+	<delete id="deleteMember" parameterType="string"
+		flushCache="true" statementType="PREPARED" >
+		delete from member where member_id = #{userId}
+	</delete>
+
+</mapper>

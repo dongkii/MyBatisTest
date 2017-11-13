@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>testWebProjectA</display-name>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <filter>
+  	<filter-name>MemberFilter</filter-name>
+  	<filter-class>member.filter.MemberFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>MemberFilter</filter-name>
+  	<url-pattern>*.me</url-pattern>
+  </filter-mapping>
+  
+  <servlet>
+    <servlet-name>MemberServlet</servlet-name>
+    <servlet-class>member.controller.MemberServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MemberServlet</servlet-name>
+    <url-pattern>*.me</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>NoticeServlet</servlet-name>
+    <servlet-class>notice.controller.NoticeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>NoticeServlet</servlet-name>
+    <url-pattern>*.no</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>BoardServlet</servlet-name>
+    <servlet-class>board.controller.BoardServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BoardServlet</servlet-name>
+    <url-pattern>*.bo</url-pattern>
+  </servlet-mapping>
+</web-app>

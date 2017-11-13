@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE configuration PUBLIC
+"-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="member.model.vo.Member" alias="Member" />
+		<!-- <typeAlias type="notice.model.vo.Notice" alias="Notice" />
+		<typeAlias type="board.model.vo.Board" alias="Board" />
+		<typeAlias type="board.model.vo.BoardPage" alias="BoardPage"/> -->
+	</typeAliases>
+	<environments default="development">
+	<!-- db 연결 설정은 여러 개 지정해 놓을 수 있음, 구분은 id -->
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
+				<property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:xe" />
+				<property name="username" value="student" />
+				<property name="password" value="student" />
+			</dataSource>
+		</environment>		
+	</environments>
+	<!-- 사용할 매퍼 파일 등록 : 필수 -->
+	<!-- 주의 : 등록된 매퍼 파일중에 오류가 있으면, 다른 매퍼에도 영향을 줌 -->
+	<mappers>
+		<mapper resource="member/model/mapper/member-mapper.xml" />
+		<!-- <mapper resource="board/model/mapper/board-mapper.xml" />
+		<mapper resource="notice/model/mapper/notice-mapper.xml" /> -->
+	</mappers>
+</configuration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

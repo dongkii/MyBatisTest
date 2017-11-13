@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC
+"-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">
+	
+	<resultMap id="resultNotice" type="Notice">
+		<id property="noticeNo" column="NOTICE_NO" />
+		<result property="noticeTitle" column="NOTICE_TITLE" />
+		<result property="noticeWriter" column="NOTICE_WRITER"/>
+		<result property="noticeContent" column="NOTICE_CONTENT"/>
+		<result property="noticeDate" column="NOTICE_DATE"/>
+		<result property="originalFileName" column="ORIGINAL_FILENAME"/>
+		<result property="renameFileName" column="RENAME_FILENAME"/>
+		<result property="readCount" column="READ_COUNT"/>
+	</resultMap>
+	
+	<select id="selectList" resultType="list" resultMap="resultNotice">
+		select * from notice order by notice_no desc
+	</select>
+	
+	<select id="selectOne" parameterType="_int" resultType="Notice" resultMap="resultNotice">
+		select * from notice where notice_no = #{noticeNo}
+	</select>
+	
+	<insert id="insertNotice" parameterType="Notice" flushCache="true" statementType="PREPARED" useGeneratedKeys="true">
+		insert into notice values ((select max(notice_no) + 1 from notice), 
+		#{noticeTitle}, #{noticeWriter}, #{noticeContent}, default, #{originalFileName}, #{renameFileName}, default)
+	</insert>
+	
+	<insert id="insertNotice2" parameterType="Notice" flushCache="true" statementType="PREPARED" useGeneratedKeys="true">
+		insert into notice values ((select max(notice_no) + 1 from notice), 
+		#{noticeTitle}, #{noticeWriter}, #{noticeContent}, default, null, null, default)
+	</insert>
+
+	<update id="updateReadCount" parameterType="_int" flushCache="true" statementType="PREPARED">
+		update notice set read_count = read_count + 1 where notice_no = #{noticeNo}
+	</update>
+	
+	<update id="updateNotice" parameterType="Notice" flushCache="true" statementType="PREPARED">
+		update notice set notice_title = #{noticeTitle}, notice_content = #{noticeContent}, 
+		original_filename = #{originalFileName}, rename_filename = #{renameFileName} where notice_no = #{noticeNo}
+	</update>
+	
+	<update id="updateNotice2" parameterType="Notice" flushCache="true" statementType="PREPARED">
+		update notice set notice_title = #{noticeTitle}, notice_content = #{noticeContent} where notice_no = #{noticeNo}
+	</update>
+
+	<delete id="deleteNotice" parameterType="_int" flushCache="true" statementType="PREPARED">
+		delete from notice where notice_no = #{noticeNo}
+	</delete>
+	
+	<select id="selectTitleSearch" parameterType="string" resultType="list" resultMap="resultNotice">
+		select * from notice where notice_title like #{keyword} order by notice_no desc
+	</select>
+	
+</mapper>

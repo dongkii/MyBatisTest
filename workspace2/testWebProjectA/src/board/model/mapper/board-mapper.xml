@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC
+"-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+
+	<resultMap id="resultBoard" type="Board">
+		<id property="boardNum" column="BOARD_NUM" />
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="boardWriter" column="BOARD_WRITER"/>
+		<result property="boardContent" column="BOARD_CONTENT"/>
+		<result property="boardOriginalFileName" column="BOARD_ORIGINAL_FILENAME"/>
+		<result property="boardRenameFileName" column="BOARD_RENAME_FILENAME"/>
+		<result property="boardDate" column="BOARD_DATE"/>
+		<result property="boardReadCount" column="BOARD_READCOUNT"/>
+		<result property="boardLevel" column="BOARD_LEVEL"/>
+		<result property="boardRef" column="BOARD_REF"/>
+		<result property="boardReplyRef" column="BOARD_REPLY_REF"/>
+		<result property="boardReplySeq" column="BOARD_REPLY_SEQ"/>
+	</resultMap>
+		
+	<select id="getListCount" resultType="_int">
+		<![CDATA[
+		select count(*) from board
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="board.model.vo.BoardPage" resultType="list" resultMap="resultBoard">
+		<![CDATA[
+		select * from (select rownum rnum, board_num, board_title, board_writer, 
+		board_content, board_original_filename, board_rename_filename, board_date, 
+		board_level, board_ref, board_reply_ref, board_reply_seq, board_readcount 
+		from (select * from board order by board_ref desc, board_reply_ref desc, 
+		board_level asc, board_reply_seq asc)) where rnum >= #{startRow} and rnum <= #{endRow}
+		]]>
+	</select>
+	
+	<insert id="insertBoard" parameterType="Board" flushCache="true" statementType="PREPARED" useGeneratedKeys="true">
+		<![CDATA[
+		insert into board values ((select max(board_num)+1 from board), 
+		#{boardTitle}, #{boardWriter}, #{boardContent}, #{boardOriginalFileName}, #{boardRenameFileName}, 
+		sysdate, default, 0, (select max(board_num)+1 from board), NULL, default)
+		]]>
+	</insert>
+	
+	<insert id="insertBoard2" parameterType="Board" flushCache="true" statementType="PREPARED" useGeneratedKeys="true">
+		<![CDATA[
+		insert into board values ((select max(board_num)+1 from board), 
+		#{boardTitle}, #{boardWriter}, #{boardContent}, null, null, 
+		sysdate, default, 0, (select max(board_num)+1 from board), NULL, default)
+		]]>
+	</insert>
+
+	<update id="addReadCount" parameterType="_int" flushCache="true" statementType="PREPARED">
+		<![CDATA[
+		update board set board_readcount = board_readcount + 1 where board_num = #{bnum}
+		]]>
+	</update>
+	
+	<select id="selectBoard" parameterType="Board" resultType="Board" resultMap="resultBoard">
+		<![CDATA[
+		select * from board where board_num = #{boardNum}
+		]]>
+	</select>
+
+	<delete id="deleteBoard" parameterType="_int" flushCache="true" statementType="PREPARED">
+		<![CDATA[delete from board where board_num = #{bnum}]]>
+	</delete>
+	
+	<update id="updateReplySeq" parameterType="Board" flushCache="true" statementType="PREPARED">
+		<![CDATA[
+		update board set board_reply_seq = board_reply_seq + 1 
+		where board_ref = #{boardRef} and board_level = #{boardLevel} and board_reply_ref = #{boardReplyRef}
+		]]>
+	</update>
+	
+	<insert id="insertReply1" parameterType="Board" flushCache="true" statementType="PREPARED" useGeneratedKeys="true">
+		<![CDATA[
+		insert into board values ((select max(board_num) + 1 from board), 
+		#{boardTitle}, #{boardWriter}, #{boardContent}, null, null, sysdate, default, #{boardLevel}, #{boardRef}, 
+		(select max(board_num) + 1 from board), 1)
+		]]>
+	</insert>
+		
+	<insert id="insertReply2" parameterType="Board" flushCache="true" statementType="PREPARED" useGeneratedKeys="true">
+		<![CDATA[
+		insert into board values ((select max(board_num) + 1 from board), 
+		#{boardTitle}, #{boardWriter}, #{boardContent}, null, null, sysdate, default, #{boardLevel}, #{boardRef}, 
+		#{boardReplyRef}, 1)
+		]]>
+	</insert>
+	
+	<update id="updateReply" parameterType="Board" flushCache="true" statementType="PREPARED">
+		<![CDATA[
+		update board set board_title = #{boardTitle}, board_content = #{boardContent} where board_num = #{boardNum}
+		]]>
+	</update>
+	
+	<update id="updateBoard" parameterType="Board" flushCache="true" statementType="PREPARED">
+		<![CDATA[
+		update board set board_title = #{boardTitle}, board_content = #{boardContent}, 
+		board_original_filename = #{boardOriginalFileName}, board_rename_filename = #{boardRenameFileName} 
+		where board_num = #{boardNum}
+		]]>
+	</update>
+	
+	<select id="selectTop3" resultType="list" resultMap="resultBoard">
+		<![CDATA[
+		select * from (select rownum rnum, board_num, BOARD_TITLE 
+		from (select * from board where board_level = 0 order by board_readcount desc)) 
+		where rnum >= 1 and rnum <= 3
+		]]>
+	</select>
+
+</mapper>
